@@ -1,8 +1,6 @@
 <template>
-  <div>
     <!-- 一级路由对象的组件挂载点 -->
     <router-view></router-view>
-  </div>
 </template>
 
 <script>
