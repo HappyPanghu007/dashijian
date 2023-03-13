@@ -1,17 +1,15 @@
 <template>
   <div>
-    <el-button>123</el-button>
+    <!-- 一级路由对象的组件挂载点 -->
+    <router-view></router-view>
   </div>
 </template>
 
 <script>
 // 命名导出时，导入需要加大括号
-import { registerAPI } from './api'
+
 export default {
-  async created () {
-    const res = await registerAPI()
-    console.log(res)
-  }
+
 }
 </script>
 
