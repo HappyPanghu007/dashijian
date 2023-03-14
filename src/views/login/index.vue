@@ -1,5 +1,3 @@
-<!-- eslint-disable vue/multi-word-component-names -->
-// eslint-disable-next-line vue/multi-word-component-names
 <template>
   <!-- 登录页面的整体盒子 -->
   <div class="login-container">
@@ -82,6 +80,8 @@ export default {
             this.$message.success(res.message)
             // 提交给mutations把token字符串保存到vuex中
             this.updateToken(res.token)
+            // 跳转到布局页
+            this.$router.push('/')
           } else {
             // 失败
             this.$message.error(res.message)
