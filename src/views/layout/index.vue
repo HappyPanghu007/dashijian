@@ -28,7 +28,7 @@
             ><i class="el-icon-key"></i>重置密码</el-menu-item
           >
         </el-submenu>
-        <el-menu-item index="2"
+        <el-menu-item index="2" @click="logoutFn"
           ><i class="el-icon-switch-button"></i>退出</el-menu-item
         >
       </el-menu>
@@ -47,8 +47,32 @@
 </template>
 
 <script>
+// 在组件标签上绑定的所有事件(包括原生事件的名字click, input等等)
+// 都是自定义事件，都需要组件内$emit来触发才行
+// 万一组件内不支持这个原生事件名字
+// 解决:@事件名.native="methods里方法名"
+// .native给组件内根标签，绑定这个原生的事件
+
 export default {
-  name: 'my-layout'
+  name: 'my-layout',
+  methods: {
+    logoutFn() {
+      // 询问用户是否退出登录
+      this.$confirm('您确认退出登录吗？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(() => {
+          // TODO：执行退出登录的操作
+          // 1. 清空 token
+          this.$store.commit('updateToken', '')
+          // 2. 跳转到登录页面
+          this.$router.push('/login')
+        })
+        .catch((err) => err)
+    }
+  }
 }
 </script>
 
