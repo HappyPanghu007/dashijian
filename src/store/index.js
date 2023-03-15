@@ -11,6 +11,9 @@ export default new Vuex.Store({
     userInfo: {} // 定义用户信息对象
   },
   getters: {
+    nickname: state => state.userInfo.nickname, // 昵称
+    username: state => state.userInfo.username, // 用户名
+    user_pic: state => state.userInfo.user_pic // 用户头像
   },
   mutations: {
     // 保存token
