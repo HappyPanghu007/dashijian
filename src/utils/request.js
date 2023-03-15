@@ -1,6 +1,8 @@
 // 基于axios封装，网络请求的函数
 import axios from 'axios'
 import store from '@/store'
+import router from '@/router'
+import { Message } from 'element-ui'
 
 // axios.create()创建一个带配置项的自定义axios函数
 // myAxios请求的时候地址baseURL+url，然后后台请求
@@ -38,5 +40,21 @@ myAxios.interceptors.request.use(function (config) {
    */
 })
 
+// 定义响应拦截器
+myAxios.interceptors.response.use(function (response) {
+  // 响应状态码为 2xx 时触发成功的回调，形参中的 response 是“成功的结果”
+  return response
+}, function (error) {
+  // 响应状态码不是 2xx 时触发失败的回调，形参中的 error 是“失败的结果”
+  if (error.response.status === 401) {
+  // 本次响应式token过期
+  // 清除vuex里一切，然后切换回到登录页面(被动退出登录状态)
+    store.commit('updateToken', '')
+    store.commit('updateUserInfo', {})
+    router.push('/login')
+    Message.error('用户身份过期！')
+  }
+  return Promise.reject(error)
+})
 // 导出axios自定义的函数
 export default myAxios
