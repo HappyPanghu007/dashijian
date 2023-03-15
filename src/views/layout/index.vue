@@ -43,47 +43,42 @@
           <span>欢迎 {{ nickname || username }}</span>
         </div>
         <!-- 侧边栏的导航菜单 -->
+        <!-- 属性不传值，默认值为true -->
         <el-menu
           default-active="/home"
           class="el-menu-vertical-demo"
+          unique-opened
+          router
           @open="handleOpen"
           @close="handleClose"
           background-color="#23262E"
           text-color="#fff"
           active-text-color="#409EFF"
         >
-          <el-menu-item index="/home">
-            <i class="el-icon-s-home"></i>
-            <span>首页</span>
-          </el-menu-item>
-          <el-submenu index="/topic">
-            <template slot="title">
-              <i class="el-icon-tickets"></i>
-              <span>文章管理</span>
-            </template>
-            <el-menu-item index="/topic1">
-              <i class="el-icon-s-home"></i>
-              <span>文章1</span>
+          <template v-for="item in menus">
+            <el-menu-item
+              v-if="!item.children"
+              :index="item.indexPath"
+              :key="item.indexPath"
+            >
+              <i :class="item.icon"></i>
+              <span>{{ item.title }}</span>
             </el-menu-item>
-            <el-menu-item index="/topic2">
-              <i class="el-icon-s-home"></i>
-              <span>文章2</span>
-            </el-menu-item>
-          </el-submenu>
-          <el-submenu index="/my">
-            <template slot="title">
-              <i class="el-icon-tickets"></i>
-              <span>个人中心</span>
-            </template>
-            <el-menu-item index="/my1">
-              <i class="el-icon-s-home"></i>
-              <span>1</span>
-            </el-menu-item>
-            <el-menu-item index="/my2">
-              <i class="el-icon-s-home"></i>
-              <span>2</span>
-            </el-menu-item>
-          </el-submenu>
+            <el-submenu v-else :index="item.indexPath" :key="item.indexPath">
+              <template slot="title">
+                <i :class="item.icon"></i>
+                <span>{{ item.title }}</span>
+              </template>
+              <el-menu-item
+                v-for="(obj, index) in item.children"
+                :index="obj.indexPath"
+                :key="index"
+              >
+                <i :class="obj.icon"></i>
+                <span>{{ obj.title }}</span>
+              </el-menu-item>
+            </el-submenu>
+          </template>
         </el-menu>
       </el-aside>
       <el-container>
@@ -103,8 +98,14 @@
 // 解决:@事件名.native="methods里方法名"
 // .native给组件内根标签，绑定这个原生的事件
 import { mapGetters } from 'vuex'
+import { getMenusAPI } from '@/api'
 export default {
   name: 'my-layout',
+  data() {
+    return {
+      menus: [] // 侧边栏数据
+    }
+  },
   computed: {
     ...mapGetters(['username', 'nickname', 'user_pic'])
   },
@@ -131,7 +132,15 @@ export default {
     },
     handleClose(key, keyPath) {
       console.log(key, keyPath)
+    },
+    async getMenusListFn() {
+      const { data: res } = await getMenusAPI()
+      console.log(res)
+      this.menus = res.data
     }
+  },
+  created() {
+    this.getMenusListFn()
   }
 }
 </script>

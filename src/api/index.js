@@ -43,12 +43,29 @@ export const loginAPI = ({ username, password }) => {
   })
 }
 
+/**
+ * 获取用户信息
+ * @returns  Promise对象
+ */
 export const getUserInfoAPI = () => {
   return request({
     url: '/my/userinfo',
     // metgod不写默认GET类型
     // 传参给后台: params(查询字符串query), data(请求体body), headers(请求头)
     // this.$store.state.token这里this不是组件对象不能用this.$store拿到store对象
+    headers: {
+      Authorization: store.state.token
+    }
+  })
+}
+
+/**
+ * 获取-侧边栏菜单数据
+ * @returns Promise对象
+ */
+export const getMenusAPI = () => {
+  return request({
+    url: '/my/menus',
     headers: {
       Authorization: store.state.token
     }
