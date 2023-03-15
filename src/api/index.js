@@ -1,7 +1,6 @@
 // 封装的是具体的接口请求方法
 // 注意:每个方法只负责请求一个url地址
 import request from '@/utils/request'
-import store from '@/store' // 引入store对象
 
 // 导出接口方法，为了在逻辑页面引入后调用
 
@@ -49,13 +48,10 @@ export const loginAPI = ({ username, password }) => {
  */
 export const getUserInfoAPI = () => {
   return request({
-    url: '/my/userinfo',
+    url: '/my/userinfo'
     // metgod不写默认GET类型
     // 传参给后台: params(查询字符串query), data(请求体body), headers(请求头)
     // this.$store.state.token这里this不是组件对象不能用this.$store拿到store对象
-    headers: {
-      Authorization: store.state.token
-    }
   })
 }
 
@@ -65,9 +61,6 @@ export const getUserInfoAPI = () => {
  */
 export const getMenusAPI = () => {
   return request({
-    url: '/my/menus',
-    headers: {
-      Authorization: store.state.token
-    }
+    url: '/my/menus'
   })
 }

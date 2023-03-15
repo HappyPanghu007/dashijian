@@ -55,7 +55,7 @@
           text-color="#fff"
           active-text-color="#409EFF"
         >
-          <template v-for="item in menus">
+          <template v-for="(item, index) in menus">
             <el-menu-item
               v-if="!item.children"
               :index="item.indexPath"
@@ -64,7 +64,7 @@
               <i :class="item.icon"></i>
               <span>{{ item.title }}</span>
             </el-menu-item>
-            <el-submenu v-else :index="item.indexPath" :key="item.indexPath">
+            <el-submenu v-else :index="item.indexPath" :key="index">
               <template slot="title">
                 <i :class="item.icon"></i>
                 <span>{{ item.title }}</span>
