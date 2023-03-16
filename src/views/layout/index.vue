@@ -45,7 +45,7 @@
         <!-- 侧边栏的导航菜单 -->
         <!-- 属性不传值，默认值为true -->
         <el-menu
-          default-active="/home"
+          :default-active="$route.path"
           class="el-menu-vertical-demo"
           unique-opened
           router
