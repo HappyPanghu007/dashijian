@@ -64,3 +64,22 @@ export const getMenusAPI = () => {
     url: '/my/menus'
   })
 }
+
+/**
+ * 更新-基本资料
+ * @param {*} param0  { id, username, nickname, email, user_pic }
+ * @returns Promise对象
+ */
+export const updateUserInfoAPI = ({ id, username, nickname, email, user_pic }) => {
+  return request({
+    url: '/my/userinfo',
+    method: 'PUT',
+    data: {
+      id,
+      username,
+      nickname,
+      email,
+      user_pic
+    }
+  })
+}

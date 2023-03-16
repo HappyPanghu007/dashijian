@@ -32,6 +32,7 @@
 </template>
 
 <script>
+import { updateUserInfoAPI } from '@/api'
 export default {
   name: 'UserInfo',
   data() {
@@ -56,6 +57,26 @@ export default {
           { type: 'email', message: '邮箱格式不正确', trigger: 'blur' }
         ]
       }
+    }
+  },
+  methods: {
+    // 提交修改的点击事件
+    submitFn() {
+      this.$refs.userFormRef.validate(async (valid) => {
+        if (valid) {
+          // 因为后端更新用户基本资料接口，需要带id过去，userForm对象里本身没有
+          // 所以缺少id，就给他添加一个
+          this.userForm.id = this.$store.state.userInfo.id
+          const { data: res } = await updateUserInfoAPI(this.userForm)
+          if (res.code !== 0) return this.$message.error('更新用户信息失败！')
+          // 更新用户信息成功，刷新 Vuex 中的数据
+          this.$message.success('更新成功！')
+          // 重新让vuex获取下最新的用户数据
+          this.$store.dispatch('initUserInfo')
+        } else {
+          return false
+        }
+      })
     }
   }
 }

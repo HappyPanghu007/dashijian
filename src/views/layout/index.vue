@@ -138,7 +138,6 @@ export default {
     },
     async getMenusListFn() {
       const { data: res } = await getMenusAPI()
-      console.log(res)
       this.menus = res.data
     }
   },
