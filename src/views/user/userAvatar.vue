@@ -29,6 +29,7 @@
           type="success"
           icon="el-icon-upload"
           :disabled="avatar === ''"
+          @click="uploadFn"
           >上传头像</el-button
         >
       </div>
@@ -37,6 +38,7 @@
 </template>
 
 <script>
+import { updateAvatarAPI } from '@/api'
 export default {
   name: 'UserAvatar',
   data() {
@@ -59,7 +61,6 @@ export default {
         this.avatar = ''
       } else {
         // 选择了图片
-        console.log(files[0])
 
         // 目标:选择的图片文件，要给到img标签上做纯前端的预览
         // img标签的src值
@@ -81,6 +82,15 @@ export default {
           this.avatar = e.target.result
         }
       }
+    },
+    async uploadFn() {
+      const { data: res } = await updateAvatarAPI(this.avatar)
+      // 失败
+      if (res.code !== 0) return this.$message.error(res.message)
+      // 成功
+      this.$message.success(res.message)
+      // 立刻让vuex里actions(获取用户信息的actions)再请求一次后台更新vuex里值
+      this.$store.dispatch('initUserInfo')
     }
   }
 }
