@@ -4,7 +4,7 @@
     <el-card class="box-card">
       <div slot="header" class="clearfix header-box">
         <span>文章分类</span>
-        <el-button type="primary" size="mini" @click="addVisible = true"
+        <el-button type="primary" size="mini" @click="addCateShowDialogBtnFn"
           >添加分类</el-button
         >
       </div>
@@ -91,8 +91,14 @@
 </template>
 
 <script>
-import { getArtCateListAPI, addArtCateAPI } from '@/api'
+/* 经验:如果用同一个按钮，想要做状态区分
+1.定义一个标记变量isEdit (true编辑,false新增),还要定义本次要编辑的数据唯一id值, veditId
+2.在点击修改的时候，isEdit改为true ,  editId保存要修改的数据id
+3.在点击新增按钮的时候,-isEdit改为false, editId置空
+4。在点击保存按钮时(确定按钮时)，就可以用isEdit变量做区分了
+ */
 
+import { getArtCateListAPI, addArtCateAPI, updateArtCateAPI } from '@/api'
 export default {
   name: 'ArtCate',
   data() {
@@ -122,7 +128,9 @@ export default {
             trigger: 'blur'
           }
         ]
-      }
+      },
+      isEdit: false, // true为编辑状态,false新增状态
+      editId: '' // 保存正在要编辑的数据id值
     }
   },
   created() {
@@ -135,21 +143,43 @@ export default {
       const res = await getArtCateListAPI()
       this.cateList = res.data.data
     },
+    // 添加分类按钮点击事件
+    addCateShowDialogBtnFn() {
+      this.addVisible = true
+      this.isEdit = false
+      this.editId = ''
+    },
     // 对话框内-添加按钮-点击事件
-    addFn() {
+    async addFn() {
+      // 表单预校验
       this.$refs.addRef.validate(async (valid) => {
         if (valid) {
-          // 通过校验
-          const { data: res } = await addArtCateAPI(this.addForm)
-          if (res.code !== 0) return this.$message.error('添加分类失败！')
-          this.$message.success('添加分类成功！')
+          // 判断当前是新增还是编辑
+          if (this.isEdit) {
+            // 编辑状态
+            // 调用接口传递数据给后台
+            const { data: res } = await updateArtCateAPI({
+              id: this.editId,
+              ...this.addForm
+            })
+            if (res.code !== 0) return this.$message.error('更新分类失败！')
+            this.$message.success('更新分类成功！')
+          } else {
+            // 新增
+            // 调用接口传递数据给后台
+            const { data: res } = await addArtCateAPI(this.addForm)
+            if (res.code !== 0) return this.$message.error('添加分类失败！')
+            this.$message.success('添加分类成功！')
+          }
+
           // 重新请求列表数据
           this.getArtCateFn()
+          // 关闭对话框
+          this.addVisible = false
         } else {
           return false
         }
       })
-      this.addVisible = false
     },
     // 对话框内-取消按钮-点击事件
     cancelFn() {
@@ -163,6 +193,8 @@ export default {
     updateCateBtnFn(obj) {
       // obj的值:{ id:文章分类id, cate_name:文章分类名字, cate_alias:文章分类别名}
       this.addVisible = true
+      this.editId = obj.id
+      this.isEdit = true
       // 数据回显（回填）
       this.addForm.cate_name = obj.cate_name
       this.addForm.cate_alias = obj.cate_alias
