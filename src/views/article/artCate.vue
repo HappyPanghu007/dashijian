@@ -83,7 +83,8 @@
 </template>
 
 <script>
-import { getArtCateListAPI } from '@/api'
+import { getArtCateListAPI, addArtCateAPI } from '@/api'
+
 export default {
   name: 'ArtCate',
   data() {
@@ -128,6 +129,18 @@ export default {
     },
     // 对话框内-添加按钮-点击事件
     addFn() {
+      this.$refs.addRef.validate(async (valid) => {
+        if (valid) {
+          // 通过校验
+          const { data: res } = await addArtCateAPI(this.addForm)
+          if (res.code !== 0) return this.$message.error('添加分类失败！')
+          this.$message.success('添加分类成功！')
+          // 重新请求列表数据
+          this.getArtCateFn()
+        } else {
+          return false
+        }
+      })
       this.addVisible = false
     },
     // 对话框内-取消按钮-点击事件

@@ -89,7 +89,6 @@ export default {
     updatePwdFn() {
       this.$refs.pwdFormRef.validate(async (valid) => {
         if (!valid) return false // 未通过校验拦住
-
         const { data: res } = await updatePwdAPI(this.pwdForm)
         if (res.code !== 0) return this.$message.error('原密码不正确')
         this.$message.success('更新密码成功！')
