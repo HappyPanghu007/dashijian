@@ -196,11 +196,18 @@ export default {
       this.editId = obj.id
       this.isEdit = true
       // 数据回显（回填）
-      this.addForm.cate_name = obj.cate_name
-      this.addForm.cate_alias = obj.cate_alias
+      this.$nextTick(() => {
+        this.addForm.cate_name = obj.cate_name
+        this.addForm.cate_alias = obj.cate_alias
+      })
     }
   }
 }
+
+// 小bug:
+// 复现:第一次打开网页，先点击修改，再点击新增，发现输入框竟然有值
+// 原因:点击修改后，关闭对话框的时候，置空失效了
+// 具体分析:resetFields有问题
 </script>
 
   <style lang="less" scoped>
