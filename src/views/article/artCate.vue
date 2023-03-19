@@ -26,7 +26,9 @@
               @click="updateCateBtnFn(scope.row)"
               >修改</el-button
             >
-            <el-button type="danger" size="mini">删除</el-button>
+            <el-button type="danger" size="mini" @click="removeFn(scope.row.id)"
+              >删除</el-button
+            >
           </template>
         </el-table-column>
       </el-table>
@@ -98,7 +100,12 @@
 4。在点击保存按钮时(确定按钮时)，就可以用isEdit变量做区分了
  */
 
-import { getArtCateListAPI, addArtCateAPI, updateArtCateAPI } from '@/api'
+import {
+  getArtCateListAPI,
+  addArtCateAPI,
+  updateArtCateAPI,
+  delArtCateAPI
+} from '@/api'
 export default {
   name: 'ArtCate',
   data() {
@@ -200,6 +207,14 @@ export default {
         this.addForm.cate_name = obj.cate_name
         this.addForm.cate_alias = obj.cate_alias
       })
+    },
+    // 删除-文章分类
+    async removeFn(id) {
+      const { data: res } = await delArtCateAPI(id)
+      if (res.code !== 0) return this.$message.error('删除分类失败！')
+      this.$message.success('删除分类成功！')
+      // 重新请求列表数据
+      this.getArtCateFn()
     }
   }
 }
