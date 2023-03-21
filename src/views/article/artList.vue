@@ -74,14 +74,17 @@
               v-for="obj in cateList"
               :key="obj.id"
               :label="obj.cate_name"
-              :value="obj.cate_id"
+              :value="obj.id"
             ></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="文章内容" prop="content">
-          <quill-editor v-model="pubForm.content"></quill-editor>
+          <quill-editor
+            v-model="pubForm.content"
+            @change="contentChangeFn"
+          ></quill-editor>
         </el-form-item>
-        <el-form-item label="文章封面">
+        <el-form-item label="文章封面" prop="cover_img">
           <!-- 用来显示封面的图片 -->
           <img
             src="../../assets/images/cover.jpg"
@@ -150,11 +153,20 @@ export default {
           }
         ],
         cate_id: [
-          { required: true, message: '请选择文章标题', trigger: 'blur' }
+          { required: true, message: '请选择文章分类', trigger: 'change' }
         ],
         content: [
+          // 校验不生效
+          // 原因：
+          // content对应quill-editor富文本编辑器，它不是el提供表单标签
+          // el-input等输入框的在blur事件时进行校验
+          // 下拉菜单，单选框，复选框，是在change事件时进行校验
+          // quill-editor2个事件都没有，所以你输入内容也不会自动走校验
+          // 解决：
+          // 自己来给quill-editor绑定change事件(在文档里查到的它支持change事件内容改变事件)
           { required: true, message: '请输入文章内容', trigger: 'blur' }
-        ]
+        ],
+        cover_img: [{ required: true, message: '请选择封面', trigger: 'blur' }]
       },
       cateList: [] // 保存文章分类列表
     }
@@ -228,6 +240,17 @@ export default {
     pubArticleFn(str) {
       // str的值：‘已发布’或‘草稿’
       this.pubForm.state = str
+      this.$refs.pubFormRef.validate(async (valid) => {
+        if (valid) {
+          console.log(this.pubForm)
+        } else {
+          return false
+        }
+      })
+    },
+    // 富文本编辑器内容改变了触发次方法
+    contentChangeFn() {
+      this.$refs.pubFormRef.validateField('content')
     }
   }
 }
