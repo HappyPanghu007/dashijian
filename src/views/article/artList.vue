@@ -81,6 +81,26 @@
         <el-form-item label="文章内容" prop="content">
           <quill-editor v-model="pubForm.content"></quill-editor>
         </el-form-item>
+        <el-form-item label="文章封面">
+          <!-- 用来显示封面的图片 -->
+          <img
+            src="../../assets/images/cover.jpg"
+            alt=""
+            class="cover-img"
+            ref="imgRef"
+          />
+          <br />
+          <!-- 文件选择框，默认被隐藏 -->
+          <input
+            type="file"
+            style="display: none"
+            accept="image/*"
+            ref="iptFileRef"
+            @change="changeCoverFn"
+          />
+          <!-- 选择封面的按钮 -->
+          <el-button type="text" @click="selCoverFn">+ 选择封面</el-button>
+        </el-form-item>
       </el-form>
     </el-dialog>
   </div>
@@ -104,7 +124,8 @@ export default {
         // 表单的数据对象
         title: '', // 文章分类标题
         cate_id: '', // 文章分类id
-        content: '' // 文章的内容
+        content: '', // 文章的内容
+        cover_img: '' // 封面图片（保存的是文件）
       },
       pubFormRules: {
         // 表单的验证规则对象
@@ -170,6 +191,23 @@ export default {
     async getCateListFn() {
       const { data: res } = await getArtCateListAPI()
       this.cateList = res.data
+    },
+    // 选择封面点击事件-> 让文件选择窗口出现
+    selCoverFn() {
+      this.$refs.iptFileRef.click() // 用JS来模拟一次点击事件动作
+    },
+    // 用户选择了封面文件
+    changeCoverFn(e) {
+      // e.target 拿到触发事件的那个标签(input标签对象本身)
+      // e.target.files拿到选择的文件数组
+      const files = e.target.files
+      if (files.length === 0) {
+        // 用户没有选择文件
+        this.pubForm.cover_img = null
+      } else {
+        // 用户选择了文件
+        this.pubForm.cover_img = files[0]
+      }
     }
   }
 }
