@@ -164,9 +164,12 @@ export default {
           // quill-editor2个事件都没有，所以你输入内容也不会自动走校验
           // 解决：
           // 自己来给quill-editor绑定change事件(在文档里查到的它支持change事件内容改变事件)
-          { required: true, message: '请输入文章内容', trigger: 'blur' }
+          // 在事件处理函数中用el-form组件对象内，调用某个校验规则再重新执行（validateField)
+          { required: true, message: '请输入文章内容', trigger: 'change' }
         ],
-        cover_img: [{ required: true, message: '请选择封面', trigger: 'blur' }]
+        cover_img: [
+          { required: true, message: '请选择封面', trigger: 'change' }
+        ]
       },
       cateList: [] // 保存文章分类列表
     }
@@ -235,6 +238,9 @@ export default {
         const url = URL.createObjectURL(files[0])
         this.$refs.imgRef.setAttribute('src', url)
       }
+
+      // 让表单单独校验封面的规则
+      this.$refs.pubFormRef.validateField('cover_img')
     },
     // 表单里（点击发布或存为草稿）按钮的点击事件
     pubArticleFn(str) {
