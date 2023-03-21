@@ -130,12 +130,8 @@ export default {
         })
         .catch((err) => err)
     },
-    handleOpen(key, keyPath) {
-      console.log(key, keyPath)
-    },
-    handleClose(key, keyPath) {
-      console.log(key, keyPath)
-    },
+    handleOpen(key, keyPath) {},
+    handleClose(key, keyPath) {},
     async getMenusListFn() {
       const { data: res } = await getMenusAPI()
       this.menus = res.data
