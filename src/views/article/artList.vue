@@ -53,6 +53,7 @@
       :visible.sync="pubDialogVisible"
       fullscreen
       :before-close="handleClose"
+      @close="dialogCloseFn"
     >
       <!-- 发布文章的对话框 -->
       <el-form
@@ -81,7 +82,7 @@
         <el-form-item label="文章内容" prop="content">
           <quill-editor
             v-model="pubForm.content"
-            @change="contentChangeFn"
+            @blur="contentChangeFn"
           ></quill-editor>
         </el-form-item>
         <el-form-item label="文章封面" prop="cover_img">
@@ -118,7 +119,7 @@
 </template>
 
 <script>
-import { getArtCateListAPI } from '@/api'
+import { getArtCateListAPI, uploadArticleAPI } from '@/api'
 // 标签和样式中，引入图片文件可以写路径，在S里引入图片要用import引入
 import imgObj from '../../assets/images/cover.jpg'
 export default {
@@ -165,7 +166,7 @@ export default {
           // 解决：
           // 自己来给quill-editor绑定change事件(在文档里查到的它支持change事件内容改变事件)
           // 在事件处理函数中用el-form组件对象内，调用某个校验规则再重新执行（validateField)
-          { required: true, message: '请输入文章内容', trigger: 'change' }
+          { required: true, message: '请输入文章内容', trigger: 'blur' }
         ],
         cover_img: [
           { required: true, message: '请选择封面', trigger: 'change' }
@@ -248,7 +249,20 @@ export default {
       this.pubForm.state = str
       this.$refs.pubFormRef.validate(async (valid) => {
         if (valid) {
-          console.log(this.pubForm)
+          // 通过校验
+          const fd = new FormData() // 准备一个表单数据对象的容器 FormData类是H5新出的专门未来装文件内容和其他参数的一个容器
+          // fd.append('参数名',值)
+          fd.append('title', this.pubForm.title)
+          fd.append('cate_id', this.pubForm.cate_id)
+          fd.append('content', this.pubForm.content)
+          fd.append('cover_img', this.pubForm.cover_img)
+          fd.append('state', this.pubForm.state)
+          const { data: res } = await uploadArticleAPI(fd)
+          if (res.code !== 0) return this.$message.error(res.message)
+          this.$message.success(res.message)
+
+          // 关闭对话框
+          this.pubDialogVisible = false
         } else {
           return false
         }
@@ -257,6 +271,12 @@ export default {
     // 富文本编辑器内容改变了触发次方法
     contentChangeFn() {
       this.$refs.pubFormRef.validateField('content')
+    },
+    // 发布文章-。对话框关闭时-。清空表单
+    dialogCloseFn() {
+      this.$refs.pubFormRef.resetFields()
+      // 我们需要手动给封面标签img重新设置一个值，因为它没有收到v-model影响
+      this.$refs.imgRef.setAttribute('src', imgObj)
     }
   }
 }
