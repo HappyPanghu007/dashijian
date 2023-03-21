@@ -108,6 +108,8 @@
 
 <script>
 import { getArtCateListAPI } from '@/api'
+// 标签和样式中，引入图片文件可以写路径，在S里引入图片要用import引入
+import imgObj from '../../assets/images/cover.jpg'
 export default {
   name: 'ArtList',
   data() {
@@ -204,9 +206,13 @@ export default {
       if (files.length === 0) {
         // 用户没有选择文件
         this.pubForm.cover_img = null
+        this.$refs.imgRef.setAttribute('src', imgObj)
       } else {
         // 用户选择了文件
         this.pubForm.cover_img = files[0]
+        // 把图片文件显示到img标签中
+        const url = URL.createObjectURL(files[0])
+        this.$refs.imgRef.setAttribute('src', url)
       }
     }
   }
