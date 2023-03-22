@@ -44,7 +44,13 @@
       </div>
 
       <!-- 文章表格区域 -->
-
+      <el-table :data="artList" style="width: 100%" border stripe>
+        <el-table-column label="文章标题" prop="title"></el-table-column>
+        <el-table-column label="分类" prop="cate_name"></el-table-column>
+        <el-table-column label="发表时间" prop="pub_date"></el-table-column>
+        <el-table-column label="状态" prop="state"></el-table-column>
+        <el-table-column label="操作"></el-table-column>
+      </el-table>
       <!-- 分页区域 -->
     </el-card>
     <!-- 发表文章的 Dialog 对话框 -->
@@ -119,7 +125,7 @@
 </template>
 
 <script>
-import { getArtCateListAPI, uploadArticleAPI } from '@/api'
+import { getArtCateListAPI, uploadArticleAPI, getArticleListAPI } from '@/api'
 // 标签和样式中，引入图片文件可以写路径，在S里引入图片要用import引入
 import imgObj from '../../assets/images/cover.jpg'
 export default {
@@ -172,11 +178,16 @@ export default {
           { required: true, message: '请选择封面', trigger: 'change' }
         ]
       },
-      cateList: [] // 保存文章分类列表
+      cateList: [], // 保存文章分类列表
+      artList: [], // 文章的列表数据
+      total: 0 // 总数据条数
     }
   },
   created() {
+    // 请求分类数据
     this.getCateListFn()
+    // 请求文章列表
+    this.initArtListFn()
   },
   methods: {
     // 发表文章按钮->点击事件->让添加文章对话框出现
@@ -263,6 +274,8 @@ export default {
 
           // 关闭对话框
           this.pubDialogVisible = false
+          // 刷新文章列表->再次请求文章列表数据
+          this.initArtListFn()
         } else {
           return false
         }
@@ -277,6 +290,14 @@ export default {
       this.$refs.pubFormRef.resetFields()
       // 我们需要手动给封面标签img重新设置一个值，因为它没有收到v-model影响
       this.$refs.imgRef.setAttribute('src', imgObj)
+    },
+    // 获取所有的文章列表
+    async initArtListFn() {
+      const { data: res } = await getArticleListAPI(this.q)
+
+      if (res.code !== 0) return this.$message.error('获取文章列表失败!')
+      this.artList = res.data // 保存当前获取的文章列表
+      this.total = res.total // 保存总数
     }
   }
 }
