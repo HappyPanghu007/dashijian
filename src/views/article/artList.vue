@@ -56,6 +56,16 @@
         <el-table-column label="操作"></el-table-column>
       </el-table>
       <!-- 分页区域 -->
+      <el-pagination
+        @size-change="handleSizeChangeFn"
+        @current-change="handleCurrentChangeFn"
+        :current-page.sync="q.pagenum"
+        :page-sizes="[2, 3, 5, 10]"
+        :page-size.sync="q.pagesize"
+        layout="total, sizes, prev, pager, next, jumper"
+        :total="total"
+      >
+      </el-pagination>
     </el-card>
     <!-- 发表文章的 Dialog 对话框 -->
     <el-dialog
@@ -139,7 +149,7 @@ export default {
       // 查询参数对象
       q: {
         pagenum: 1,
-        pagesize: 2,
+        pagesize: 5, // 默认当前页需要几条数据(传递给后台,·后台就返回几个数据)
         cate_id: '',
         state: ''
       },
@@ -302,6 +312,24 @@ export default {
       if (res.code !== 0) return this.$message.error('获取文章列表失败!')
       this.artList = res.data // 保存当前获取的文章列表
       this.total = res.total // 保存总数
+    },
+    // 监听 pageSize 的变化->pageSize 发生了变化
+    handleSizeChangeFn(newSize) {
+      // newSize:当前每页需要显示的条数
+      // 为 pagesize 赋值
+      this.q.pagesize = newSize
+      // 默认展示第一页数据
+      this.q.pagenum = 1
+      // 重新发起请求
+      this.initArtListFn()
+    },
+    // 监听页码值的变化->页码值发生了变化
+    handleCurrentChangeFn(newPage) {
+      // newPage：当前要看的页数
+      // 为页码值赋值
+      this.q.pagenum = newPage
+      // 重新发起请求
+      this.initArtListFn()
     }
   }
 }
@@ -345,4 +373,8 @@ export default {
 // 现在[data-v-hash值].ql-editor
 
 // 总结: scoped不会给组件内的标签添加data-v属性，所以你要用::v-deep穿透选择组件内的标签设置样式
+
+.el-pagination {
+  margin-top: 15px;
+}
 </style>
