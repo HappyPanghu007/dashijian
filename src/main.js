@@ -13,8 +13,16 @@ import 'quill/dist/quill.core.css'
 import 'quill/dist/quill.snow.css'
 import 'quill/dist/quill.bubble.css'
 
+// 格式化时间
+import dayjs from 'dayjs'
+
 Vue.use(VueQuillEditor)
 Vue.config.productionTip = false
+
+// 定义格式化时间函数
+Vue.prototype.$formatDate = (dataObj) => {
+  return dayjs(dataObj).format('YYYY-MM-DD HH:mm:ss')
+}
 
 new Vue({
   router,
