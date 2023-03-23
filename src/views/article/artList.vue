@@ -49,7 +49,13 @@
 
       <!-- 文章表格区域 -->
       <el-table :data="artList" style="width: 100%" border stripe>
-        <el-table-column label="文章标题" prop="title"></el-table-column>
+        <el-table-column label="文章标题">
+          <template v-slot="{ row }">
+            <el-link type="primary" @click="showDetailFn(row.id)">{{
+              row.title
+            }}</el-link>
+          </template>
+        </el-table-column>
         <el-table-column label="分类" prop="cate_name"></el-table-column>
         <el-table-column label="发表时间" prop="pub_date">
           <template v-slot="{ row }">
@@ -139,11 +145,20 @@
         </el-form-item>
       </el-form>
     </el-dialog>
+    <!-- 查看文章详情的对话框 -->
+    <el-dialog title="文章预览" :visible.sync="detailVisible" width="80%">
+      <span>这是一段信息</span>
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import { getArtCateListAPI, uploadArticleAPI, getArticleListAPI } from '@/api'
+import {
+  getArtCateListAPI,
+  uploadArticleAPI,
+  getArticleListAPI,
+  getArticleDetailAPI
+} from '@/api'
 // 标签和样式中，引入图片文件可以写路径，在S里引入图片要用import引入
 import imgObj from '../../assets/images/cover.jpg'
 export default {
@@ -198,7 +213,9 @@ export default {
       },
       cateList: [], // 保存文章分类列表
       artList: [], // 文章的列表数据
-      total: 0 // 总数据条数
+      total: 0, // 总数据条数
+      detailVisible: false, // 控制文章详情对话框的显示与隐藏
+      artDetail: {} // 文章的详情信息对象
     }
   },
   created() {
@@ -358,6 +375,14 @@ export default {
       this.q.state = ''
       // 重新发起请求
       this.initArtListFn()
+    },
+    // 文章标题点击事件->获取文章详情
+    async showDetailFn(id) {
+      const { data: res } = await getArticleDetailAPI(id)
+      if (res.code !== 0) return this.$message.error('获取文章详情失败!')
+      this.artDetail = res.data
+      // 展示对话框
+      this.detailVisible = true
     }
   }
 }
