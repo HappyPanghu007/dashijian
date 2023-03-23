@@ -18,7 +18,7 @@
                 v-for="obj in cateList"
                 :key="obj.id"
                 :label="obj.cate_name"
-                :value="obj.cate_id"
+                :value="obj.id"
               ></el-option>
             </el-select>
           </el-form-item>
@@ -29,8 +29,12 @@
             </el-select>
           </el-form-item>
           <el-form-item>
-            <el-button type="primary" size="small">筛选</el-button>
-            <el-button type="info" size="small">重置</el-button>
+            <el-button type="primary" size="small" @click="choseFn"
+              >筛选</el-button
+            >
+            <el-button type="info" size="small" @click="resetFn"
+              >重置</el-button
+            >
           </el-form-item>
         </el-form>
         <!-- 发表文章的按钮 -->
@@ -328,6 +332,24 @@ export default {
       // newPage：当前要看的页数
       // 为页码值赋值
       this.q.pagenum = newPage
+      // 重新发起请求
+      this.initArtListFn()
+    },
+    // 筛选按钮->点击事件
+    choseFn() {
+      // 目的:当有了筛选的条件，我想让页码回归1，每页的条数回归2
+      this.q.pagenum = 1
+      this.q.pagesize = 2
+      // 重新发起请求
+      this.initArtListFn()
+    },
+    // 重置按钮->点击事件
+    resetFn() {
+      // 重置Q对象的属性的值
+      this.q.pagenum = 1
+      this.q.pagesize = 2
+      this.q.cate_id = ''
+      this.q.state = ''
       // 重新发起请求
       this.initArtListFn()
     }
