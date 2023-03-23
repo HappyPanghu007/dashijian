@@ -147,7 +147,27 @@
     </el-dialog>
     <!-- 查看文章详情的对话框 -->
     <el-dialog title="文章预览" :visible.sync="detailVisible" width="80%">
-      <span>这是一段信息</span>
+      <h1 class="title">{{ artDetail.title }}</h1>
+
+      <div class="info">
+        <span>作者：{{ artDetail.nickname || artDetail.username }}</span>
+        <span>发布时间：{{ $formatDate(artDetail.pub_date) }}</span>
+        <span>所属分类：{{ artDetail.cate_name }}</span>
+        <span>状态：{{ artDetail.state }}</span>
+      </div>
+
+      <!-- 分割线 -->
+      <el-divider></el-divider>
+
+      <!-- 文章的封面 -->
+      <img
+        v-if="artDetail.cover_img"
+        :src="'http://big-event-vue-api-t.itheima.net' + artDetail.cover_img"
+        alt=""
+      />
+
+      <!-- 文章的详情 -->
+      <div v-html="artDetail.content" class="detail-box"></div>
     </el-dialog>
   </div>
 </template>
@@ -430,4 +450,34 @@ export default {
 .el-pagination {
   margin-top: 15px;
 }
+
+//   查看文章详情的对话框
+.title {
+  font-size: 24px;
+  text-align: center;
+  font-weight: normal;
+  color: #000;
+  margin: 0 0 10px 0;
+}
+
+.info {
+  font-size: 12px;
+  span {
+    margin-right: 20px;
+  }
+}
+
+// 修改 dialog 内部元素的样式，需要添加样式穿透
+::v-deep .detail-box {
+  img {
+    width: 500px;
+  }
+}
 </style>
+<!-- 积累知识
+组件创建时,会用data里的默认值，让template里标签先渲染一次
+你的网络请求数据回来，data里变量发生了变化，会让template里使用此变量的地方再次更新dom
+小问题:第一次渲染的时候无值可能会导致一些报错，但是效果还是出来了
+解决1:v-if先不让template里会报错的那个代码先屏蔽执行
+解决2:可以先给那个对象的属性一个空字符串，别让报错就行
+ -->
