@@ -63,7 +63,13 @@
           </template>
         </el-table-column>
         <el-table-column label="状态" prop="state"></el-table-column>
-        <el-table-column label="操作"></el-table-column>
+        <el-table-column label="操作">
+          <template v-slot="{ row }">
+            <el-button type="danger" size="mini" @click="removeFn(row.id)"
+              >删除</el-button
+            >
+          </template>
+        </el-table-column>
       </el-table>
       <!-- 分页区域 -->
       <el-pagination
@@ -177,7 +183,8 @@ import {
   getArtCateListAPI,
   uploadArticleAPI,
   getArticleListAPI,
-  getArticleDetailAPI
+  getArticleDetailAPI,
+  delArticleAPI
 } from '@/api'
 import { baseURL } from '@/utils/request'
 // 标签和样式中，引入图片文件可以写路径，在S里引入图片要用import引入
@@ -405,6 +412,15 @@ export default {
       this.artDetail = res.data
       // 展示对话框
       this.detailVisible = true
+    },
+    // 删除文章按钮的点击事件
+    async removeFn(artId) {
+      const { data: res } = await delArticleAPI(artId)
+      if (res.code !== 0) return this.$message.error(res.message)
+      this.$message.success(res.message)
+
+      // 重新请求
+      this.initArtListFn()
     }
   }
 }

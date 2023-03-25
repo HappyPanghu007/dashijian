@@ -219,3 +219,17 @@ export const getArticleDetailAPI = (id) => {
     }
   })
 }
+/**
+ * 删除文章
+ * @param {*} id  文章id
+ * @returns  Promise对象
+ */
+export const delArticleAPI = (id) => {
+  return request({
+    url: '/my/article/info',
+    method: 'DELETE',
+    params: {
+      id
+    }
+  })
+}
