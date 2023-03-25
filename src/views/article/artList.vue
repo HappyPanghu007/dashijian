@@ -162,7 +162,7 @@
       <!-- 文章的封面 -->
       <img
         v-if="artDetail.cover_img"
-        :src="'http://big-event-vue-api-t.itheima.net' + artDetail.cover_img"
+        :src="baseURL + artDetail.cover_img"
         alt=""
       />
 
@@ -179,6 +179,7 @@ import {
   getArticleListAPI,
   getArticleDetailAPI
 } from '@/api'
+import { baseURL } from '@/utils/request'
 // 标签和样式中，引入图片文件可以写路径，在S里引入图片要用import引入
 import imgObj from '../../assets/images/cover.jpg'
 export default {
@@ -235,7 +236,8 @@ export default {
       artList: [], // 文章的列表数据
       total: 0, // 总数据条数
       detailVisible: false, // 控制文章详情对话框的显示与隐藏
-      artDetail: {} // 文章的详情信息对象
+      artDetail: {}, // 文章的详情信息对象
+      baseURL
     }
   },
   created() {

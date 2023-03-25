@@ -4,11 +4,14 @@ import store from '@/store'
 import router from '@/router'
 import { Message } from 'element-ui'
 
+// 接口和图片资源所在的服务器地址
+export const baseURL = 'http://big-event-vue-api-t.itheima.net'
+
 // axios.create()创建一个带配置项的自定义axios函数
 // myAxios请求的时候地址baseURL+url，然后后台请求
 
 const myAxios = axios.create({
-  baseURL: 'http://big-event-vue-api-t.itheima.net'
+  baseURL: baseURL
 })
 
 // 定义请求拦截器
