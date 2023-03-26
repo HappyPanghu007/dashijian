@@ -12,5 +12,28 @@ module.exports = defineConfig({
   // 如果你敲击yarn server,process.env.NODE_ENV的值就是' development'字符串
   // 如果你敲击yarn build , process.env.NODE_ENV的值就是' production'字符串
 
-  publicPath: process.env.NODE_ENV === 'production' ? './' : '/'
+  publicPath: process.env.NODE_ENV === 'production' ? './' : '/',
+  configureWebpack: {
+    // provide the app's title in webpack's name field, so that
+    // it can be accessed in index.html to inject the correct title.
+    // name: name,
+    externals: {
+      // 基本格式：
+      // '包名' : '在项目中引入的名字'
+      echarts: 'echarts',
+      vue: 'Vue',
+      'vue-router': 'VueRouter',
+      vuex: 'Vuex',
+      axios: 'axios',
+      dayjs: 'dayjs',
+      'element-ui': 'ELEMENT',
+      'vue-quill-editor': 'VueQuillEditor',
+      'vuex-persistedstate': 'createPersistedState'
+    }
+    // resolve: {
+    //   alias: {
+    //     '@': resolve('src')
+    //   }
+    // }
+  }
 })
